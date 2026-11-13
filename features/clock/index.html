@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clock, Weather &amp; Daily Briefing — Pocket-AI-S3</title>
+<style>
+  :root {
+    --bg: #f7f6f2;
+    --surface: #ffffff;
+    --pad: #eceae2;
+    --border: #dfdcd1;
+    --ink: #111214;
+    --dim: #57595e;
+    --acc: #ff5a1f;
+    --acc-hover: #e54d16;
+    color-scheme: light;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 500 16px/1.55 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-variant-numeric: tabular-nums;
+  }
+  a { color: inherit; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: rgba(247, 246, 242, 0.94);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px 0;
+    flex-wrap: wrap;
+  }
+  .brand {
+    font-weight: 800;
+    font-size: 16px;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .nav-links { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+  .nav-links a.link { color: var(--dim); text-decoration: none; font-size: 14px; font-weight: 600; }
+  .nav-links a.link:hover { color: var(--ink); }
+  .nav-user { font-size: 13px; color: var(--dim); }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 10px 18px;
+    border-radius: 12px;
+    font: 700 14px/1 inherit;
+    text-decoration: none;
+    border: 0;
+    cursor: pointer;
+    gap: 8px;
+  }
+  .btn-pri { background: var(--acc); color: #ffffff; }
+  .btn-pri:hover { background: var(--acc-hover); }
+  .btn-sec { background: var(--pad); color: var(--ink); border: 1px solid var(--border); }
+  .btn-sec:hover { background: #e2dfd5; }
+  .subtabs {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding: 20px 0 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .subtab {
+    padding: 9px 15px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    color: var(--dim);
+    background: var(--pad);
+    border: 1px solid var(--border);
+  }
+  .subtab:hover { color: var(--ink); background: #e2dfd5; }
+  .subtab.active { background: var(--acc); color: #ffffff; border-color: var(--acc); }
+  .feature-hero {
+    display: grid;
+    grid-template-columns: minmax(280px, 420px) minmax(0, 1fr);
+    gap: 40px;
+    padding: 36px 0 48px;
+    align-items: center;
+  }
+  .device-frame {
+    background: radial-gradient(circle at 50% 48%, #262b34 0%, #15181f 52%, #0b0d10 90%);
+    border: 1px solid #24272d;
+    border-radius: 24px;
+    padding: 20px;
+    box-shadow: 0 18px 44px rgba(17, 18, 20, 0.14);
+    display: grid;
+    place-items: center;
+  }
+  .device-frame img {
+    width: 100%;
+    max-width: 360px;
+    height: auto;
+    display: block;
+    border-radius: 14px;
+  }
+  .eyebrow {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--acc);
+    margin-bottom: 8px;
+  }
+  h1 { margin: 0 0 12px; font-size: clamp(28px, 3.8vw, 40px); line-height: 1.12; letter-spacing: -0.02em; }
+  .lead { margin: 0 0 20px; color: var(--dim); font-size: 17px; max-width: 56ch; }
+  .highlights {
+    margin: 0 0 24px;
+    padding: 0 0 0 20px;
+    display: grid;
+    gap: 10px;
+    color: var(--ink);
+    font-size: 15px;
+  }
+  .specs { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 24px; }
+  .spec { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; }
+  .spec span { display: block; font-size: 11px; color: var(--dim); text-transform: uppercase; letter-spacing: 0.1em; }
+  .spec strong { font-size: 14px; }
+  .cta-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  .ex-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 18px;
+  }
+  .ex-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    overflow: hidden;
+    display: grid;
+    align-content: start;
+  }
+  .ex-thumb {
+    background: radial-gradient(circle at 50% 48%, #262b34 0%, #15181f 52%, #0b0d10 90%);
+    padding: 18px;
+    display: grid;
+    place-items: center;
+    border-bottom: 1px solid var(--border);
+  }
+  .ex-thumb.screen-only { background: #0a0a0c; }
+  .ex-thumb img { width: 100%; max-width: 240px; height: auto; display: block; border-radius: 12px; }
+  .ex-thumb.screen-only img { max-width: 210px; border: 1px solid #2b2b30; border-radius: 18px; }
+  .ex-body { padding: 18px; display: grid; gap: 6px; }
+  .ex-body h3 { margin: 0; font-size: 16px; }
+  .ex-body p { margin: 0; color: var(--dim); font-size: 14px; }
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 24px 0 40px;
+    color: var(--dim);
+    font-size: 13px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  @media (max-width: 820px) {
+    .feature-hero { grid-template-columns: 1fr; padding: 24px 0 36px; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="/">⚡ Pocket-AI-S3</a>
+    <nav class="nav-links" aria-label="Primary">
+      <a class="link" href="/features">Features</a>
+      <a class="link" href="/#hardware">Hardware</a>
+      <a class="link" href="/#pricing">Pricing</a>
+      <a class="link" href="/#waitlist">Waitlist</a>
+      
+      <a class="btn btn-pri" href="https://arapod.hellodigital.co/login">Log in</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="subtabs" aria-label="Feature screens">
+    <a class="subtab" href="/features">All Screens</a><a class="subtab active" href="/features/clock" aria-current="page">Clock &amp; Briefing</a><a class="subtab" href="/features/recorder">Voice Recorder</a><a class="subtab" href="/features/agent">AI Agent</a><a class="subtab" href="/features/recordings">Recordings &amp; Sync</a><a class="subtab" href="/features/tasks">Tasks &amp; Playback</a><a class="subtab" href="/features/tools">Focus, Mesh &amp; Tools</a>
+  </nav>
+
+  
+  <section class="feature-hero">
+    <div class="device-frame">
+      <img src="/design/cutout/screen-01-clock.png" alt="Pocket-AI-S3 showing the Clock, Weather, Moon Phase, and Daily Briefing AMOLED screen">
+    </div>
+    <div>
+      <div class="eyebrow">Always-ready home screen</div>
+      <h1>Clock, Weather &amp; Daily Briefing</h1>
+      <p class="lead">Wake-on-lift 1.8-inch AMOLED watch face with live local weather, moon phase, step counter, and an AI Daily Briefing pulled from your localhost.</p>
+      <ul class="highlights"><li>31 built-in watch faces (Engine 3) with live weather, sunrise/sunset, and step goals</li><li>Daily Briefing card summarizes upcoming calendar events and open tasks at a glance</li><li>On-demand Wi-Fi radio keeps battery usage low while syncing every 15 minutes</li><li>Bottom status bar shows recording state, SD free space, and battery percentage</li></ul>
+      <div class="specs"><div class="spec"><span>Display</span><strong>368x448 AMOLED</strong></div><div class="spec"><span>IMU</span><strong>QMI8658 Lift-to-Wake</strong></div><div class="spec"><span>Faces</span><strong>31 Custom Faces</strong></div></div>
+      <div class="cta-row">
+        <a class="btn btn-pri" href="/#waitlist">Join the Waitlist</a>
+        <a class="btn btn-sec" href="/features/tools">&larr; Focus, Mesh &amp; Tools</a>
+        <a class="btn btn-sec" href="/features/recorder">Voice Recorder &rarr;</a>
+      </div>
+    </div>
+  </section>
+  <section style="padding:32px 0 48px;border-top:1px solid var(--border);">
+    <div class="eyebrow">Screen-Only Captures (368&times;448)</div>
+    <h2 style="margin:0 0 18px;font-size:22px;">What this screen shows</h2>
+    <div class="ex-grid"><article class="ex-card"><div class="ex-thumb screen-only"><img src="/design/screen-examples/clock-daily-briefing-v1.png" alt="Clock &amp; Daily Briefing (v1)"></div><div class="ex-body"><h3>Clock &amp; Daily Briefing (v1)</h3><p>Shows live local weather, moon phase, step count, and the AI Daily Briefing card synced from your localhost.</p></div></article><article class="ex-card"><div class="ex-thumb screen-only"><img src="/design/screen-examples/music-player-v1.png" alt="Local MP3 / WAV Player (v1)"></div><div class="ex-body"><h3>Local MP3 / WAV Player (v1)</h3><p>Plays local audio tracks stored on the MicroSD card over onboard speaker or Bluetooth A2DP.</p></div></article></div>
+  </section>
+  <section style="padding:32px 0 48px;border-top:1px solid var(--border);">
+    <div class="eyebrow">Built-in Watch Face Library (31 Faces)</div>
+    <h2 style="margin:0 0 18px;font-size:22px;">All 31 Clock Face Options</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px;"><div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:10px;text-align:center;"><div style="background:#050608;border-radius:10px;padding:8px;display:flex;justify-content:center;align-items:center;"><img src="/faces/bauhaus/thumb.png" alt="Bauhaus watch face" loading="lazy" style="width:92px;height:112px;object-fit:contain;border-radius:8px;"></div><div style="font-size:12px;font-weight:700;margin-top:8px;">Bauhaus</div></div><div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:10px;text-align:center;"><div style="background:#050608;border-radius:10px;padding:8px;display:flex;justify-content:center;align-items:center;"><img src="/faces/binary/thumb.png" alt="Binary watch face" loading="lazy" style="width:92px;height:112px;object-fit:contain;border-radius:8px;"></div><div style="font-size:12px;font-weight:700;margin-top:8px;">Binary</div></div><div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:10px;text-align:center;"><div style="background:#050608;border-radius:10px;padding:8px;display:flex;justify-content:center;align-items:center;"><img src="/faces/character/thumb.png" alt="Character watch face" loading="lazy" style="width:92px;height:112px;object-fit:contain;border-radius:8px;"></div><div style="font-size:12px;font-weight:700;margin-top:8px;">Character</div></div><div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:10px;text-align:center;"><div style="background:#050608;border-radius:10px;padding:8px;display:flex;justify-content:center;align-items:center;"><img src="/faces/chrono/thumb.png" alt="Chrono watch face" loading="lazy" style="width:92px;height:112px;object-fit:contain;border-radius:8px;"></div><div style="font-size:12px;font-weight:700;margin-top:8px;">Chrono</div></div><div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:10px;text-align:center;"><div style="background:#050608;border-radius:10px;padding:8px;display:flex;justify-content:center;align-items:center;"><img src="/faces/console/thumb.png" alt="Console watch face" loading="lazy" style="width:92px;height:112px;object-fit:contain;border-radius:8px;"></div><div style="font-size:12px;font-weight:700;margin-top:8px;">Console</div></div><div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:10px;text-align:center;"><div style="background:#050608;border-radius:10px;padding:8px;display:flex;justify-content:center;align-items:center;"><img src="/faces/diver/thumb.png" alt="Diver watch face" loading="lazy" style="width:92px;height:112px;object-fit:contain;border-radius:8px;"></div><div style="font-size:12px;font-weight:700;margin-top:8px;">Diver</div></div><div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:10px;text-align:center;"><div style="background:#050608;border-radius:10px;padding:8px;display:flex;justify-content:center;align-items:center;"><img src="/faces/fuzzy/thumb.png" alt="Fuzzy watch face" loading="lazy" style="width:92px;height:112px;object-fit:contain;border-radius:8px;"></div><div style="font-size:12px;font-weight:700;margin-top:8px;">Fuzzy</div></div><div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:10px;text-align:center;"><div style="background:#050608;border-radius:10px;padding:8px;display:flex;justify-content:center;align-items:center;"><img src="/faces/goals/thumb.png" alt="Goals watch face" loading="lazy" style="width:92px;height:112px;object-fit:contain;border-radius:8px;"></div><div style="font-size:12px;font-weight:700;margin-top:8px;">Goals</div></div><div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:10px;text-align:center;"><div style="background:#050608;border-radius:10px;padding:8px;display:flex;justify-content:center;align-items:center;"><img src="/faces/infograph/thumb.png" alt="Infograph watch face" loading="lazy" style="width:92px;height:112px;object-fit:contain;border-radius:8px;"></div><div style="font-size:12px;font-weight:700;margin-top:8px;">Infograph</div></div><div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:10px;text-align:center;"><div style="background:#050608;border-radius:10px;padding:8px;display:flex;justify-content:center;align-items:center;"><img src="/faces/lcd/thumb.png" alt="Lcd watch face" loading="lazy" style="width:92px;height:112px;object-fit:contain;border-radius:8px;"></div><div style="font-size:12px;font-weight:700;margin-top:8px;">Lcd</div></div><div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:10px;text-align:center;"><div style="background:#050608;border-radius:10px;padding:8px;display:flex;justify-content:center;align-items:center;"><img src="/faces/linear/thumb.png" alt="Linear watch face" loading="lazy" style="width:92px;height:112px;object-fit:contain;border-radius:8px;"></div><div style="font-size:12px;font-weight:700;margin-top:8px;">Linear</div></div><div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:10px;text-align:center;"><div style="background:#050608;border-radius:10px;padding:8px;display:flex;justify-content:center;align-items:center;"><img src="/faces/modular/thumb.png" alt="Modular watch face" loading="lazy" style="width:92px;height:112px;object-fit:contain;border-radius:8px;"></div><div style="font-size:12px;font-weight:700;margin-top:8px;">Modular</div></div><div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:10px;text-align:center;"><div style="background:#050608;border-radius:10px;padding:8px;display:flex;justify-content:center;align-items:center;"><img src="/faces/offcentre/thumb.png" alt="Offcentre watch face" loading="lazy" style="width:92px;height:112px;object-fit:contain;border-radius:8px;"></div><div style="font-size:12px;font-weight:700;margin-top:8px;">Offcentre</div></div><div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:10px;text-align:center;"><div style="background:#050608;border-radius:10px;padding:8px;display:flex;justify-content:center;align-items:center;"><img src="/faces/pilot/thumb.png" alt="Pilot watch face" loading="lazy" style="width:92px;height:112px;object-fit:contain;border-radius:8px;"></div><div style="font-size:12px;font-weight:700;margin-top:8px;">Pilot</div></div><div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:10px;text-align:center;"><div style="background:#050608;border-radius:10px;padding:8px;display:flex;justify-content:center;align-items:center;"><img src="/faces/radar/thumb.png" alt="Radar watch face" loading="lazy" style="width:92px;height:112px;object-fit:contain;border-radius:8px;"></div><div style="font-size:12px;font-weight:700;margin-top:8px;">Radar</div></div><div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:10px;text-align:center;"><div style="background:#050608;border-radius:10px;padding:8px;display:flex;justify-content:center;align-items:center;"><img src="/faces/rams/thumb.png" alt="Rams watch face" loading="lazy" style="width:92px;height:112px;object-fit:contain;border-radius:8px;"></div><div style="font-size:12px;font-weight:700;margin-top:8px;">Rams</div></div><div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:10px;text-align:center;"><div style="background:#050608;border-radius:10px;padding:8px;display:flex;justify-content:center;align-items:center;"><img src="/faces/reels/thumb.png" alt="Reels watch face" loading="lazy" style="width:92px;height:112px;object-fit:contain;border-radius:8px;"></div><div style="font-size:12px;font-weight:700;margin-top:8px;">Reels</div></div><div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:10px;text-align:center;"><div style="background:#050608;border-radius:10px;padding:8px;display:flex;justify-content:center;align-items:center;"><img src="/faces/regulator/thumb.png" alt="Regulator watch face" loading="lazy" style="width:92px;height:112px;object-fit:contain;border-radius:8px;"></div><div style="font-size:12px;font-weight:700;margin-top:8px;">Regulator</div></div><div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:10px;text-align:center;"><div style="background:#050608;border-radius:10px;padding:8px;display:flex;justify-content:center;align-items:center;"><img src="/faces/sector/thumb.png" alt="Sector watch face" loading="lazy" style="width:92px;height:112px;object-fit:contain;border-radius:8px;"></div><div style="font-size:12px;font-weight:700;margin-top:8px;">Sector</div></div><div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:10px;text-align:center;"><div style="background:#050608;border-radius:10px;padding:8px;display:flex;justify-content:center;align-items:center;"><img src="/faces/sidebar/thumb.png" alt="Sidebar watch face" loading="lazy" style="width:92px;height:112px;object-fit:contain;border-radius:8px;"></div><div style="font-size:12px;font-weight:700;margin-top:8px;">Sidebar</div></div><div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:10px;text-align:center;"><div style="background:#050608;border-radius:10px;padding:8px;display:flex;justify-content:center;align-items:center;"><img src="/faces/stacked/thumb.png" alt="Stacked watch face" loading="lazy" style="width:92px;height:112px;object-fit:contain;border-radius:8px;"></div><div style="font-size:12px;font-weight:700;margin-top:8px;">Stacked</div></div><div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:10px;text-align:center;"><div style="background:#050608;border-radius:10px;padding:8px;display:flex;justify-content:center;align-items:center;"><img src="/faces/station/thumb.png" alt="Station watch face" loading="lazy" style="width:92px;height:112px;object-fit:contain;border-radius:8px;"></div><div style="font-size:12px;font-weight:700;margin-top:8px;">Station</div></div><div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:10px;text-align:center;"><div style="background:#050608;border-radius:10px;padding:8px;display:flex;justify-content:center;align-items:center;"><img src="/faces/sunarc/thumb.png" alt="Sunarc watch face" loading="lazy" style="width:92px;height:112px;object-fit:contain;border-radius:8px;"></div><div style="font-size:12px;font-weight:700;margin-top:8px;">Sunarc</div></div><div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:10px;text-align:center;"><div style="background:#050608;border-radius:10px;padding:8px;display:flex;justify-content:center;align-items:center;"><img src="/faces/tank/thumb.png" alt="Tank watch face" loading="lazy" style="width:92px;height:112px;object-fit:contain;border-radius:8px;"></div><div style="font-size:12px;font-weight:700;margin-top:8px;">Tank</div></div><div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:10px;text-align:center;"><div style="background:#050608;border-radius:10px;padding:8px;display:flex;justify-content:center;align-items:center;"><img src="/faces/terminal/thumb.png" alt="Terminal watch face" loading="lazy" style="width:92px;height:112px;object-fit:contain;border-radius:8px;"></div><div style="font-size:12px;font-weight:700;margin-top:8px;">Terminal</div></div><div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:10px;text-align:center;"><div style="background:#050608;border-radius:10px;padding:8px;display:flex;justify-content:center;align-items:center;"><img src="/faces/transcript/thumb.png" alt="Transcript watch face" loading="lazy" style="width:92px;height:112px;object-fit:contain;border-radius:8px;"></div><div style="font-size:12px;font-weight:700;margin-top:8px;">Transcript</div></div><div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:10px;text-align:center;"><div style="background:#050608;border-radius:10px;padding:8px;display:flex;justify-content:center;align-items:center;"><img src="/faces/wander/thumb.png" alt="Wander watch face" loading="lazy" style="width:92px;height:112px;object-fit:contain;border-radius:8px;"></div><div style="font-size:12px;font-weight:700;margin-top:8px;">Wander</div></div><div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:10px;text-align:center;"><div style="background:#050608;border-radius:10px;padding:8px;display:flex;justify-content:center;align-items:center;"><img src="/faces/waveform/thumb.png" alt="Waveform watch face" loading="lazy" style="width:92px;height:112px;object-fit:contain;border-radius:8px;"></div><div style="font-size:12px;font-weight:700;margin-top:8px;">Waveform</div></div><div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:10px;text-align:center;"><div style="background:#050608;border-radius:10px;padding:8px;display:flex;justify-content:center;align-items:center;"><img src="/faces/waypoint/thumb.png" alt="Waypoint watch face" loading="lazy" style="width:92px;height:112px;object-fit:contain;border-radius:8px;"></div><div style="font-size:12px;font-weight:700;margin-top:8px;">Waypoint</div></div><div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:10px;text-align:center;"><div style="background:#050608;border-radius:10px;padding:8px;display:flex;justify-content:center;align-items:center;"><img src="/faces/words/thumb.png" alt="Words watch face" loading="lazy" style="width:92px;height:112px;object-fit:contain;border-radius:8px;"></div><div style="font-size:12px;font-weight:700;margin-top:8px;">Words</div></div><div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:10px;text-align:center;"><div style="background:#050608;border-radius:10px;padding:8px;display:flex;justify-content:center;align-items:center;"><img src="/faces/world/thumb.png" alt="World watch face" loading="lazy" style="width:92px;height:112px;object-fit:contain;border-radius:8px;"></div><div style="font-size:12px;font-weight:700;margin-top:8px;">World</div></div></div>
+  </section>
+
+  <footer>
+    <span>Pocket-AI-S3 &middot; HelloDigital</span>
+    <span>AGPL-3.0 Open-Source Firmware &amp; Server</span>
+  </footer>
+</main>
+</body>
+</html>

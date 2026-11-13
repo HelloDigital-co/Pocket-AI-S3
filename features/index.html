@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>All Feature Screens — Pocket-AI-S3</title>
+<style>
+  :root {
+    --bg: #f7f6f2;
+    --surface: #ffffff;
+    --pad: #eceae2;
+    --border: #dfdcd1;
+    --ink: #111214;
+    --dim: #57595e;
+    --acc: #ff5a1f;
+    --acc-hover: #e54d16;
+    color-scheme: light;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 500 16px/1.55 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-variant-numeric: tabular-nums;
+  }
+  a { color: inherit; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: rgba(247, 246, 242, 0.94);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px 0;
+    flex-wrap: wrap;
+  }
+  .brand {
+    font-weight: 800;
+    font-size: 16px;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .nav-links { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+  .nav-links a.link { color: var(--dim); text-decoration: none; font-size: 14px; font-weight: 600; }
+  .nav-links a.link:hover { color: var(--ink); }
+  .nav-user { font-size: 13px; color: var(--dim); }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 10px 18px;
+    border-radius: 12px;
+    font: 700 14px/1 inherit;
+    text-decoration: none;
+    border: 0;
+    cursor: pointer;
+    gap: 8px;
+  }
+  .btn-pri { background: var(--acc); color: #ffffff; }
+  .btn-pri:hover { background: var(--acc-hover); }
+  .btn-sec { background: var(--pad); color: var(--ink); border: 1px solid var(--border); }
+  .btn-sec:hover { background: #e2dfd5; }
+  .subtabs {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding: 20px 0 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .subtab {
+    padding: 9px 15px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    color: var(--dim);
+    background: var(--pad);
+    border: 1px solid var(--border);
+  }
+  .subtab:hover { color: var(--ink); background: #e2dfd5; }
+  .subtab.active { background: var(--acc); color: #ffffff; border-color: var(--acc); }
+  .feature-hero {
+    display: grid;
+    grid-template-columns: minmax(280px, 420px) minmax(0, 1fr);
+    gap: 40px;
+    padding: 36px 0 48px;
+    align-items: center;
+  }
+  .device-frame {
+    background: radial-gradient(circle at 50% 48%, #262b34 0%, #15181f 52%, #0b0d10 90%);
+    border: 1px solid #24272d;
+    border-radius: 24px;
+    padding: 20px;
+    box-shadow: 0 18px 44px rgba(17, 18, 20, 0.14);
+    display: grid;
+    place-items: center;
+  }
+  .device-frame img {
+    width: 100%;
+    max-width: 360px;
+    height: auto;
+    display: block;
+    border-radius: 14px;
+  }
+  .eyebrow {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--acc);
+    margin-bottom: 8px;
+  }
+  h1 { margin: 0 0 12px; font-size: clamp(28px, 3.8vw, 40px); line-height: 1.12; letter-spacing: -0.02em; }
+  .lead { margin: 0 0 20px; color: var(--dim); font-size: 17px; max-width: 56ch; }
+  .highlights {
+    margin: 0 0 24px;
+    padding: 0 0 0 20px;
+    display: grid;
+    gap: 10px;
+    color: var(--ink);
+    font-size: 15px;
+  }
+  .specs { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 24px; }
+  .spec { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; }
+  .spec span { display: block; font-size: 11px; color: var(--dim); text-transform: uppercase; letter-spacing: 0.1em; }
+  .spec strong { font-size: 14px; }
+  .cta-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  .ex-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 18px;
+  }
+  .ex-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    overflow: hidden;
+    display: grid;
+    align-content: start;
+  }
+  .ex-thumb {
+    background: radial-gradient(circle at 50% 48%, #262b34 0%, #15181f 52%, #0b0d10 90%);
+    padding: 18px;
+    display: grid;
+    place-items: center;
+    border-bottom: 1px solid var(--border);
+  }
+  .ex-thumb.screen-only { background: #0a0a0c; }
+  .ex-thumb img { width: 100%; max-width: 240px; height: auto; display: block; border-radius: 12px; }
+  .ex-thumb.screen-only img { max-width: 210px; border: 1px solid #2b2b30; border-radius: 18px; }
+  .ex-body { padding: 18px; display: grid; gap: 6px; }
+  .ex-body h3 { margin: 0; font-size: 16px; }
+  .ex-body p { margin: 0; color: var(--dim); font-size: 14px; }
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 24px 0 40px;
+    color: var(--dim);
+    font-size: 13px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  @media (max-width: 820px) {
+    .feature-hero { grid-template-columns: 1fr; padding: 24px 0 36px; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="/">⚡ Pocket-AI-S3</a>
+    <nav class="nav-links" aria-label="Primary">
+      <a class="link" href="/features">Features</a>
+      <a class="link" href="/#hardware">Hardware</a>
+      <a class="link" href="/#pricing">Pricing</a>
+      <a class="link" href="/#waitlist">Waitlist</a>
+      
+      <a class="btn btn-pri" href="https://arapod.hellodigital.co/login">Log in</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="subtabs" aria-label="Feature screens">
+    <a class="subtab active" href="/features" aria-current="page">All Screens</a><a class="subtab" href="/features/clock">Clock &amp; Briefing</a><a class="subtab" href="/features/recorder">Voice Recorder</a><a class="subtab" href="/features/agent">AI Agent</a><a class="subtab" href="/features/recordings">Recordings &amp; Sync</a><a class="subtab" href="/features/tasks">Tasks &amp; Playback</a><a class="subtab" href="/features/tools">Focus, Mesh &amp; Tools</a>
+  </nav>
+
+  
+  <section style="padding:32px 0 18px;">
+    <div class="eyebrow">Pocket-AI-S3 UI &amp; Hardware Showcase</div>
+    <h1>Every screen, built for one-handed pocket use</h1>
+    <p class="lead">Explore the 1.8&quot; AMOLED hardware views and direct 368&times;448 screen captures across Clock, Recorder, AI Agent, Recordings &amp; Transcripts, Tasks, and Tools.</p>
+  </section>
+  <section class="ex-grid"><article class="ex-card"><a href="/features/clock" class="ex-thumb"><img src="/design/cutout/screen-01-clock.png" alt="Pocket-AI-S3 showing the Clock, Weather, Moon Phase, and Daily Briefing AMOLED screen"></a><div class="ex-body"><div class="eyebrow">Always-ready home screen</div><h3><a href="/features/clock" style="text-decoration:none;">Clock, Weather &amp; Daily Briefing &rarr;</a></h3><p>Wake-on-lift 1.8-inch AMOLED watch face with live local weather, moon phase, step counter, and an AI Daily Briefing pulled from your localhost.</p></div></article><article class="ex-card"><a href="/features/recorder" class="ex-thumb"><img src="/design/cutout/screen-02-record.png" alt="Pocket-AI-S3 showing the Record screen with timer, Clip counter, and Hold-to-Record button"></a><div class="ex-body"><div class="eyebrow">Local-first audio capture</div><h3><a href="/features/recorder" style="text-decoration:none;">One-Press Voice &amp; Meeting Recorder &rarr;</a></h3><p>Capture meetings, lectures, and quick voice memos directly to your MicroSD card in uncompressed WAV — zero cloud dependency required.</p></div></article><article class="ex-card"><a href="/features/agent" class="ex-thumb"><img src="/design/cutout/screen-03-jarvis.png" alt="Pocket-AI-S3 showing the AI Agent conversation screen with local brain indicator"></a><div class="ex-body"><div class="eyebrow">Grounded in your notes</div><h3><a href="/features/agent" style="text-decoration:none;">AI Agent Voice Assistant &rarr;</a></h3><p>Hold-to-talk Q&amp;A grounded in your Obsidian vault, worklogs, and MemoryHive summaries — running on your localhost by default.</p></div></article><article class="ex-card"><a href="/features/recordings" class="ex-thumb"><img src="/design/cutout/screen-04-recordings.png" alt="Pocket-AI-S3 showing the Recordings list with RECS, NOTES, TASKS, and SYNCED tabs"></a><div class="ex-body"><div class="eyebrow">Organized on-device library</div><h3><a href="/features/recordings" style="text-decoration:none;">Recordings, Notes &amp; Sync Status &rarr;</a></h3><p>Browse recent clips, AI meeting notes, and sync status directly on the 1.8-inch touch display with instant playback.</p></div></article><article class="ex-card"><a href="/features/tasks" class="ex-thumb"><img src="/design/cutout/screen-05-task-detail.png" alt="Pocket-AI-S3 plugged into USB-C showing a Task detail view with audio playback and Mark Done"></a><div class="ex-body"><div class="eyebrow">Actionable meeting follow-ups</div><h3><a href="/features/tasks" style="text-decoration:none;">On-Device Tasks &amp; Audio Playback &rarr;</a></h3><p>Review action items extracted from your meetings, jump straight to the exact audio clip, and mark tasks done from your pocket.</p></div></article><article class="ex-card"><a href="/features/tools" class="ex-thumb"><img src="/design/cutout/06-desk-charging-sync.png" alt="Pocket-AI-S3 docked on a desk charging over USB-C"></a><div class="ex-body"><div class="eyebrow">Pocket utilities &amp; security</div><h3><a href="/features/tools" style="text-decoration:none;">Focus Timer, Companion, MeshCore &amp; Security &rarr;</a></h3><p>Beyond recording and AI, Pocket-AI-S3 packs a Pomodoro focus timer, stopwatch, battery telemetry, Squatchy companion, off-grid MeshCore LoRa, and PIN lock.</p></div></article></section>
+  <section style="padding:36px 0 48px;border-top:1px solid var(--border);margin-top:28px;">
+    <div class="eyebrow">368&times;448 Screen-Only Examples</div>
+    <h2 style="margin:0 0 18px;font-size:24px;">Feature states &amp; UI views</h2>
+    <div class="ex-grid"><article class="ex-card"><a href="/features/clock" class="ex-thumb screen-only"><img src="/design/screen-examples/clock-daily-briefing-v1.png" alt="Clock &amp; Daily Briefing (v1)"></a><div class="ex-body"><h3>Clock &amp; Daily Briefing (v1)</h3><p>Shows live local weather, moon phase, step count, and the AI Daily Briefing card synced from your localhost.</p></div></article><article class="ex-card"><a href="/features/clock" class="ex-thumb screen-only"><img src="/design/screen-examples/music-player-v1.png" alt="Local MP3 / WAV Player (v1)"></a><div class="ex-body"><h3>Local MP3 / WAV Player (v1)</h3><p>Plays local audio tracks stored on the MicroSD card over onboard speaker or Bluetooth A2DP.</p></div></article><article class="ex-card"><a href="/features/recorder" class="ex-thumb screen-only"><img src="/design/screen-examples/recorder-hold-to-record-v1.png" alt="Hold-to-Record &amp; Bookmarks (v1)"></a><div class="ex-body"><h3>Hold-to-Record &amp; Bookmarks (v1)</h3><p>Elapsed recording timer, bookmark counter, live level meter, and touch/button capture directly to MicroSD.</p></div></article><article class="ex-card"><a href="/features/agent" class="ex-thumb screen-only"><img src="/design/screen-examples/jarvis-voice-qa-v1.png" alt="AI Agent Local Q&amp;A &amp; Transcript (v1)"></a><div class="ex-body"><h3>AI Agent Local Q&amp;A &amp; Transcript (v1)</h3><p>Conversational Q&amp;A grounded in your notes, with brain source indicator, Hold-to-Talk, New Chat, and Transcript viewer.</p></div></article><article class="ex-card"><a href="/features/recordings" class="ex-thumb screen-only"><img src="/design/screen-examples/recordings-list-v1.png" alt="Recordings &amp; Sync Tabs (v1)"></a><div class="ex-body"><h3>Recordings &amp; Sync Tabs (v1)</h3><p>Four-tab browser (RECS, NOTES, TASKS, SYNCED) showing recorded clips, durations, and sync status.</p></div></article><article class="ex-card"><a href="/features/recordings" class="ex-thumb screen-only"><img src="/design/screen-examples/playback-transcript-v1.png" alt="Playback with Synced Transcript (v1)"></a><div class="ex-body"><h3>Playback with Synced Transcript (v1)</h3><p>Audio scrubber and pause/+15s controls paired with timestamped Whisper transcript lines—tap any line to seek.</p></div></article><article class="ex-card"><a href="/features/recordings" class="ex-thumb screen-only"><img src="/design/screen-examples/recording-transcript-full-v1.png" alt="Full Recording Transcript View (v1)"></a><div class="ex-body"><h3>Full Recording Transcript View (v1)</h3><p>Speaker-labeled Whisper transcript with highlighted active timestamp line and mini playback scrubber.</p></div></article><article class="ex-card"><a href="/features/tasks" class="ex-thumb screen-only"><img src="/design/screen-examples/tasks-list-v1.png" alt="Tasks List &amp; Status (v1)"></a><div class="ex-body"><h3>Tasks List &amp; Status (v1)</h3><p>Displays open and AI-suggested tasks with due dates, assignees, and source meeting links.</p></div></article><article class="ex-card"><a href="/features/tasks" class="ex-thumb screen-only"><img src="/design/screen-examples/task-detail-playback-v1.png" alt="Task Detail &amp; Audio Jump (v1)"></a><div class="ex-body"><h3>Task Detail &amp; Audio Jump (v1)</h3><p>Shows full task text, due date, source meeting, one-tap audio jump (▶ 3:11), and Mark Done.</p></div></article><article class="ex-card"><a href="/features/tasks" class="ex-thumb screen-only"><img src="/design/screen-examples/tasks-ai-chat-v1.png" alt="Tasks AI Chat &amp; Breakdown (v1)"></a><div class="ex-body"><h3>Tasks AI Chat &amp; Breakdown (v1)</h3><p>Ask your AI Agent follow-up questions on any extracted task, verify transcript context, read aloud, or mark done.</p></div></article><article class="ex-card"><a href="/features/tools" class="ex-thumb screen-only"><img src="/design/screen-examples/focus-timer-alarm-v1.png" alt="Focus Timer &amp; Alarm (v1)"></a><div class="ex-body"><h3>Focus Timer &amp; Alarm (v1)</h3><p>Circular Pomodoro countdown ring with 5m/10m/25m/45m presets and daily alarm indicator.</p></div></article><article class="ex-card"><a href="/features/tools" class="ex-thumb screen-only"><img src="/design/screen-examples/stopwatch-lap-v1.png" alt="Precision Stopwatch &amp; Laps (v1)"></a><div class="ex-body"><h3>Precision Stopwatch &amp; Laps (v1)</h3><p>Centisecond stopwatch with live lap splits and delta timing.</p></div></article><article class="ex-card"><a href="/features/tools" class="ex-thumb screen-only"><img src="/design/screen-examples/battery-summary-v1.png" alt="Battery &amp; System Summary (v1)"></a><div class="ex-body"><h3>Battery &amp; System Summary (v1)</h3><p>AXP2101 voltage, runtime estimate, display brightness, Wi-Fi RSSI, and SD free space.</p></div></article><article class="ex-card"><a href="/features/tools" class="ex-thumb screen-only"><img src="/design/screen-examples/squatchy-scanner-v1.png" alt="Squatchy RF &amp; BLE Scanner (v1)"></a><div class="ex-body"><h3>Squatchy RF &amp; BLE Scanner (v1)</h3><p>Passive BLE + Wi-Fi + Dex tracker scanner with Radar, List, Wi-Fi, and Dex tabs plus live device detections.</p></div></article><article class="ex-card"><a href="/features/tools" class="ex-thumb screen-only"><img src="/design/screen-examples/squatchy-companion-v1.png" alt="Squatchy Companion (v1)"></a><div class="ex-body"><h3>Squatchy Companion (v1)</h3><p>Step-goal &amp; detection-driven pocket pet whose health blends today&#x27;s steps/goal (60%) and detected BLE/Wi-Fi devices (40%).</p></div></article><article class="ex-card"><a href="/features/tools" class="ex-thumb screen-only"><img src="/design/screen-examples/meshcore-lora-v1.png" alt="MeshCore LoRa Peers (v1)"></a><div class="ex-body"><h3>MeshCore LoRa Peers (v1)</h3><p>Off-grid 915 MHz peer signal strength, hop count, ping, and voice note actions.</p></div></article><article class="ex-card"><a href="/features/tools" class="ex-thumb screen-only"><img src="/design/screen-examples/pin-lock-v1.png" alt="PIN Lock &amp; Emergency Rec (v1)"></a><div class="ex-body"><h3>PIN Lock &amp; Emergency Rec (v1)</h3><p>4-digit touch keypad protecting device data while keeping emergency record one tap away.</p></div></article></div>
+  </section>
+
+  <footer>
+    <span>Pocket-AI-S3 &middot; HelloDigital</span>
+    <span>AGPL-3.0 Open-Source Firmware &amp; Server</span>
+  </footer>
+</main>
+</body>
+</html>

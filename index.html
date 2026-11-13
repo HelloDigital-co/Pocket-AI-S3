@@ -1,0 +1,456 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pocket-AI-S3 — Local-First Pocket AI Recorder</title>
+<style>
+  :root {
+    --bg: #f7f6f2;
+    --surface: #ffffff;
+    --pad: #eceae2;
+    --border: #dfdcd1;
+    --ink: #111214;
+    --dim: #57595e;
+    --acc: #ff5a1f;
+    --acc-hover: #e54d16;
+    --ok: #3ddc84;
+    color-scheme: light;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 500 16px/1.55 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-variant-numeric: tabular-nums;
+  }
+  a { color: inherit; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: rgba(247, 246, 242, 0.94);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px 0;
+    flex-wrap: wrap;
+  }
+  .brand {
+    font-weight: 800;
+    font-size: 16px;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    flex-wrap: wrap;
+  }
+  .nav-links a.link {
+    color: var(--dim);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .nav-links a.link:hover { color: var(--ink); }
+  .nav-user { font-size: 13px; color: var(--dim); }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 10px 18px;
+    border-radius: 12px;
+    font: 700 14px/1 inherit;
+    text-decoration: none;
+    border: 0;
+    cursor: pointer;
+    gap: 8px;
+  }
+  .btn-pri { background: var(--acc); color: #ffffff; }
+  .btn-pri:hover { background: var(--acc-hover); }
+  .btn-sec { background: var(--pad); color: var(--ink); border: 1px solid var(--border); }
+  .btn-sec:hover { background: #e2dfd5; }
+  .hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(260px, 340px);
+    gap: 40px;
+    padding: 56px 0 48px;
+    align-items: center;
+  }
+  .eyebrow {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--acc);
+    margin-bottom: 10px;
+  }
+  h1 {
+    margin: 0 0 14px;
+    font-size: clamp(32px, 4.4vw, 48px);
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+  }
+  .lead {
+    margin: 0 0 26px;
+    color: var(--dim);
+    font-size: 17px;
+    max-width: 56ch;
+  }
+  .cta-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+  .amoled {
+    background: #0a0a0c;
+    color: #f2f2f2;
+    border: 4px solid #2b2b30;
+    border-radius: 36px;
+    padding: 24px 20px;
+    box-shadow: 0 24px 54px rgba(17, 18, 20, 0.22);
+    text-align: center;
+    display: grid;
+    gap: 14px;
+  }
+  .amoled-top { display: flex; justify-content: space-between; font-size: 11px; color: #a0a0a0; }
+  .amoled-ring {
+    width: 136px;
+    height: 136px;
+    margin: 6px auto;
+    border-radius: 50%;
+    border: 6px solid var(--acc);
+    display: grid;
+    place-items: center;
+    box-shadow: 0 0 32px rgba(255, 90, 31, 0.28);
+  }
+  .amoled-ring strong { font-size: 26px; display: block; }
+  .amoled-ring span { font-size: 11px; color: var(--ok); text-transform: uppercase; letter-spacing: 0.1em; }
+  .amoled-pills { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .amoled-pill { background: #18181b; border-radius: 12px; padding: 9px; font-size: 12px; }
+  .amoled-pill span { color: #a0a0a0; font-size: 11px; }
+  section.band { padding: 44px 0; border-top: 1px solid var(--border); }
+  h2 { margin: 0 0 20px; font-size: 26px; line-height: 1.2; }
+  .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 22px;
+    display: grid;
+    gap: 8px;
+    align-content: start;
+  }
+  .card h3 { margin: 0; font-size: 17px; }
+  .card p { margin: 0; color: var(--dim); font-size: 14px; }
+  .specs { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; }
+  .spec { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px; }
+  .spec span { display: block; font-size: 11px; color: var(--dim); text-transform: uppercase; letter-spacing: 0.1em; }
+  .spec strong { font-size: 14px; }
+  .price-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    display: grid;
+    gap: 10px;
+    align-content: start;
+  }
+  .price-card.featured { border-color: var(--acc); box-shadow: 0 10px 28px rgba(255, 90, 31, 0.08); }
+  .price-big { font-size: 32px; font-weight: 800; }
+  .price-big small { font-size: 14px; color: var(--dim); font-weight: 500; }
+  .waitlist-box {
+    margin-top: 24px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    display: grid;
+    gap: 10px;
+  }
+  .waitlist-form { display: flex; flex-wrap: wrap; gap: 10px; }
+  .waitlist-form input {
+    flex: 1 1 260px;
+    min-height: 46px;
+    padding: 10px 14px;
+    border-radius: 12px;
+    border: 1px solid #c7c3b6;
+    background: #ffffff;
+    color: var(--ink);
+    font: inherit;
+  }
+  .wl-msg { margin: 4px 0 0; color: #166534; font-weight: 600; font-size: 14px; }
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 24px 0 40px;
+    color: var(--dim);
+    font-size: 13px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  a:focus-visible, button:focus-visible, input:focus-visible {
+    outline: 2px solid var(--acc);
+    outline-offset: 2px;
+  }
+  .hero-carousel {
+    background: #07080a;
+    color: #fff;
+    border-radius: 28px;
+    padding: 18px;
+    box-shadow: 0 24px 60px rgba(17, 18, 20, 0.16);
+    border: 1px solid #262930;
+    display: grid;
+    gap: 12px;
+  }
+  .hc-stage {
+    position: relative;
+    display: grid;
+    overflow: hidden;
+    border-radius: 18px;
+    background: #101216;
+  }
+  .hc-slide {
+    grid-area: 1 / 1;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+    align-content: start;
+    padding: 16px;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+  }
+  .hc-slide.active {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+  .hc-slide img {
+    width: 100%;
+    height: 220px;
+    object-fit: contain;
+    border-radius: 14px;
+    background: radial-gradient(circle at 50% 48%, #262b34 0%, #15181f 52%, #0b0d10 90%);
+    border: 1px solid #24272d;
+    padding: 8px;
+  }
+  .hc-eyebrow {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #ff7a45;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .hc-slide h3 {
+    margin: 0 0 6px;
+    font-size: 17px;
+    line-height: 1.25;
+    color: #fff;
+  }
+  .hc-slide p {
+    margin: 0 0 10px;
+    font-size: 13px;
+    line-height: 1.45;
+    color: #a9afb9;
+  }
+  .hc-link {
+    color: #3ddc84;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+  }
+  .hc-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .hc-dots { display: flex; gap: 6px; align-items: center; }
+  .hc-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    border: 0;
+    padding: 0;
+    background: #31353e;
+    cursor: pointer;
+  }
+  .hc-dot.active { width: 22px; background: #ff5a1f; }
+  .hc-arrows { display: flex; gap: 6px; }
+  .hc-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 999px;
+    border: 1px solid #2b2f38;
+    background: #14171c;
+    color: #fff;
+    font: 700 16px/1 inherit;
+    cursor: pointer;
+  }
+  .hc-btn:hover { border-color: #ff5a1f; }
+  @media (max-width: 560px) {
+    .hc-slide { grid-template-columns: 1fr; text-align: center; justify-items: center; }
+  }
+  @media (max-width: 780px) {
+    .hero { grid-template-columns: 1fr; padding: 36px 0; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="/">⚡ Pocket-AI-S3</a>
+    <nav class="nav-links" aria-label="Primary">
+      <a class="link" href="/features">Features</a>
+      <a class="link" href="#hardware">Hardware</a>
+      <a class="link" href="#pricing">Pricing</a>
+      <a class="link" href="#waitlist">Waitlist</a>
+      
+      <a class="btn btn-pri" href="https://arapod.hellodigital.co/login">Log in</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="hero">
+    <div>
+      <div class="eyebrow">Local-first pocket AI recorder</div>
+      <h1>The AI pocket recorder that never sells your voice.</h1>
+      <p class="lead">Built on the Waveshare ESP32-S3 with a 1.8&quot; AMOLED touch display. Raw audio lands on your MicroSD first, transcribes on your localhost Whisper server, and syncs directly to Obsidian and MemoryHive.</p>
+      <div class="cta-row">
+        <a class="btn btn-pri" href="#waitlist">Join the Waitlist</a>
+        <a class="btn btn-sec" href="https://arapod.hellodigital.co/login">Log in to Console</a>
+      </div>
+    </div>
+    <div class="hero-carousel" id="hero-carousel" aria-label="Product and feature showcase carousel">
+      <div class="hc-stage">
+        <div class="hc-slide active" data-slide="0"><img src="/design/cutout/screen-01-clock.png" alt="Pocket-AI-S3 showing the Clock, Weather, Moon Phase, and Daily Briefing AMOLED screen"><div><div class="hc-eyebrow">Clock &amp; Briefing</div><h3>Clock, Weather &amp; Daily Briefing</h3><p>Wake-on-lift 1.8-inch AMOLED watch face with live local weather, moon phase, step counter, and an AI Daily Briefing pulled from your localhost.</p><a class="hc-link" href="/features/clock">Explore Clock &amp; Briefing &rarr;</a></div></div><div class="hc-slide" data-slide="1"><img src="/design/cutout/screen-02-record.png" alt="Pocket-AI-S3 showing the Record screen with timer, Clip counter, and Hold-to-Record button"><div><div class="hc-eyebrow">Voice Recorder</div><h3>One-Press Voice &amp; Meeting Recorder</h3><p>Capture meetings, lectures, and quick voice memos directly to your MicroSD card in uncompressed WAV — zero cloud dependency required.</p><a class="hc-link" href="/features/recorder">Explore Voice Recorder &rarr;</a></div></div><div class="hc-slide" data-slide="2"><img src="/design/cutout/screen-03-jarvis.png" alt="Pocket-AI-S3 showing the AI Agent conversation screen with local brain indicator"><div><div class="hc-eyebrow">AI Agent</div><h3>AI Agent Voice Assistant</h3><p>Hold-to-talk Q&amp;A grounded in your Obsidian vault, worklogs, and MemoryHive summaries — running on your localhost by default.</p><a class="hc-link" href="/features/agent">Explore AI Agent &rarr;</a></div></div><div class="hc-slide" data-slide="3"><img src="/design/cutout/screen-04-recordings.png" alt="Pocket-AI-S3 showing the Recordings list with RECS, NOTES, TASKS, and SYNCED tabs"><div><div class="hc-eyebrow">Recordings &amp; Sync</div><h3>Recordings, Notes &amp; Sync Status</h3><p>Browse recent clips, AI meeting notes, and sync status directly on the 1.8-inch touch display with instant playback.</p><a class="hc-link" href="/features/recordings">Explore Recordings &amp; Sync &rarr;</a></div></div><div class="hc-slide" data-slide="4"><img src="/design/cutout/screen-05-task-detail.png" alt="Pocket-AI-S3 plugged into USB-C showing a Task detail view with audio playback and Mark Done"><div><div class="hc-eyebrow">Tasks &amp; Playback</div><h3>On-Device Tasks &amp; Audio Playback</h3><p>Review action items extracted from your meetings, jump straight to the exact audio clip, and mark tasks done from your pocket.</p><a class="hc-link" href="/features/tasks">Explore Tasks &amp; Playback &rarr;</a></div></div><div class="hc-slide" data-slide="5"><img src="/design/cutout/06-desk-charging-sync.png" alt="Pocket-AI-S3 docked on a desk charging over USB-C"><div><div class="hc-eyebrow">Focus, Mesh &amp; Tools</div><h3>Focus Timer, Companion, MeshCore &amp; Security</h3><p>Beyond recording and AI, Pocket-AI-S3 packs a Pomodoro focus timer, stopwatch, battery telemetry, Squatchy companion, off-grid MeshCore LoRa, and PIN lock.</p><a class="hc-link" href="/features/tools">Explore Focus, Mesh &amp; Tools &rarr;</a></div></div>
+      </div>
+      <div class="hc-controls">
+        <div class="hc-dots" role="tablist" aria-label="Feature slides">
+          <button type="button" class="hc-dot active" data-dot="0" aria-label="Show Clock &amp; Briefing"></button><button type="button" class="hc-dot" data-dot="1" aria-label="Show Voice Recorder"></button><button type="button" class="hc-dot" data-dot="2" aria-label="Show AI Agent"></button><button type="button" class="hc-dot" data-dot="3" aria-label="Show Recordings &amp; Sync"></button><button type="button" class="hc-dot" data-dot="4" aria-label="Show Tasks &amp; Playback"></button><button type="button" class="hc-dot" data-dot="5" aria-label="Show Focus, Mesh &amp; Tools"></button>
+        </div>
+        <div class="hc-arrows">
+          <button type="button" class="hc-btn" id="hc-prev" aria-label="Previous feature">&lsaquo;</button>
+          <button type="button" class="hc-btn" id="hc-next" aria-label="Next feature">&rsaquo;</button>
+        </div>
+      </div>
+    </div>
+    <script>
+      (function(){
+        var root = document.getElementById('hero-carousel');
+        if (!root) return;
+        var slides = root.querySelectorAll('.hc-slide');
+        var dots = root.querySelectorAll('.hc-dot');
+        var idx = 0, timer = null;
+        function show(n){
+          idx = (n + slides.length) % slides.length;
+          slides.forEach(function(s, i){ s.classList.toggle('active', i === idx); });
+          dots.forEach(function(d, i){ d.classList.toggle('active', i === idx); });
+        }
+        function reset(){
+          if (timer) clearInterval(timer);
+          timer = setInterval(function(){ show(idx + 1); }, 4500);
+        }
+        document.getElementById('hc-prev').onclick = function(){ show(idx - 1); reset(); };
+        document.getElementById('hc-next').onclick = function(){ show(idx + 1); reset(); };
+        dots.forEach(function(d){ d.onclick = function(){ show(parseInt(d.dataset.dot, 10)); reset(); }; });
+        root.onmouseenter = function(){ if (timer) clearInterval(timer); };
+        root.onmouseleave = reset;
+        reset();
+      })();
+    </script>
+  </section>
+
+  <section class="band" id="features">
+    <div class="eyebrow">What it does today</div>
+    <h2>Designed for private capture and instant recall</h2>
+    <div class="cta-row" style="margin-bottom:20px;">
+      <a class="btn btn-sec" href="/features/clock">Clock &amp; Briefing</a><a class="btn btn-sec" href="/features/recorder">Voice Recorder</a><a class="btn btn-sec" href="/features/agent">AI Agent</a><a class="btn btn-sec" href="/features/recordings">Recordings &amp; Sync</a><a class="btn btn-sec" href="/features/tasks">Tasks &amp; Playback</a><a class="btn btn-sec" href="/features/tools">Focus, Mesh &amp; Tools</a>
+    </div>
+    <div class="grid-3">
+      <article class="card">
+        <h3><a href="/features/recorder" style="text-decoration:none;">Meeting &amp; Voice Recorder &rarr;</a></h3>
+        <p>One-press recording to MicroSD with local Whisper transcription on your localhost, structured summaries, and action items synced to Obsidian &amp; MemoryHive.</p>
+      </article>
+      <article class="card">
+        <h3><a href="/features/agent" style="text-decoration:none;">AI Agent Voice Assistant &rarr;</a></h3>
+        <p>Hold-to-talk Q&amp;A grounded in your notes and worklogs. Runs on your localhost by default, with explicit per-session approval before any cloud model is used.</p>
+      </article>
+      <article class="card">
+        <h3><a href="/features/clock" style="text-decoration:none;">31 Watch Faces, Music &amp; Tasks &rarr;</a></h3>
+        <p>1.8&quot; AMOLED touch UI with 31 custom watch faces, local MP3/WAV player, on-device tasks, Squatchy RF scanner, and MeshCore companion messaging.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="band" id="hardware">
+    <div class="eyebrow">Hardware blueprint</div>
+    <h2>Waveshare ESP32-S3-Touch-AMOLED-1.8</h2>
+    <div class="specs">
+      <div class="spec"><span>MCU</span><strong>ESP32-S3R8 240 MHz</strong></div>
+      <div class="spec"><span>Display</span><strong>1.8&quot; 368&times;448 AMOLED</strong></div>
+      <div class="spec"><span>Memory</span><strong>16MB Flash &middot; 8MB PSRAM</strong></div>
+      <div class="spec"><span>Audio</span><strong>ES8311 + Digital Mic</strong></div>
+      <div class="spec"><span>Storage</span><strong>MicroSD (SDMMC)</strong></div>
+      <div class="spec"><span>Sensors / PMIC</span><strong>QMI8658 &middot; AXP2101</strong></div>
+    </div>
+  </section>
+
+  <section class="band" id="pricing">
+    <div class="eyebrow">Plans &amp; Hardware Kit (AGPL-3.0)</div>
+    <h2>Own your data, or let us host your sealed container</h2>
+    <div class="grid-3">
+      <article class="price-card">
+        <h3>Home (BYOD)</h3>
+        <div class="price-big">$29 <small>/ year</small></div>
+        <div style="font-size:12px;font-weight:700;color:var(--dim);margin-bottom:8px;">+ shipping and handling</div>
+        <p style="color:var(--dim);font-size:14px;">Run the Pocket-AI server on your localhost (Mac, Linux, Pi, or NAS) with MemoryHive included.</p>
+      </article>
+      <article class="price-card featured">
+        <h3>Hosted</h3>
+        <div class="price-big">$68 <small>/ year</small></div>
+        <div style="font-size:12px;font-weight:700;color:var(--dim);margin-bottom:8px;">+ shipping and handling</div>
+        <p style="color:var(--dim);font-size:14px;">Sealed hosted container, remote road gateway, and MemoryHive sync. Export anytime.</p>
+      </article>
+      <article class="price-card">
+        <h3>Hardware Kit</h3>
+        <div class="price-big">~$99 <small>kit + 1 yr</small></div>
+        <div style="font-size:12px;font-weight:700;color:var(--dim);margin-bottom:8px;">+ shipping and handling</div>
+        <p style="color:var(--dim);font-size:14px;">Pre-configured Waveshare ESP32-S3 AMOLED kit including your first year of Hosted service.</p>
+      </article>
+    </div>
+
+    <div class="waitlist-box" id="waitlist">
+      <div>
+        <h3 style="margin:0 0 4px;">Join the Pocket-AI Waitlist</h3>
+        <p style="margin:0;color:var(--dim);font-size:14px;">Get notified when kits and hosted accounts open, plus firmware release updates.</p>
+      </div>
+      <form class="waitlist-form" method="post" action="/waitlist">
+        <input type="email" name="email" autocomplete="email" spellcheck="false" placeholder="you@example.com" aria-label="Waitlist email address" required>
+        <button type="submit" class="btn btn-pri">Join Waitlist</button>
+      </form>
+      
+    </div>
+  </section>
+
+  <footer>
+    <span>Pocket-AI-S3 &middot; HelloDigital</span>
+    <span>AGPL-3.0 Open-Source Firmware &amp; Server</span>
+  </footer>
+</main>
+</body>
+</html>
