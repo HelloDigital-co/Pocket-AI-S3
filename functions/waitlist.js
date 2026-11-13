@@ -2,7 +2,7 @@
 // Optional bindings in Cloudflare Pages Settings:
 //   TURNSTILE_SECRET_KEY (secret) - verifies cf-turnstile-response when configured
 //   WAITLIST_KV (KV namespace)    - fallback store if origin is unreachable
-const DEFAULT_BACKEND = 'https://arapod.hellodigital.co';
+const DEFAULT_BACKEND = 'https://app.pocketais3.com';
 
 export async function onRequestPost(context) {
   const { request, env } = context;
